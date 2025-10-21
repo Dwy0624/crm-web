@@ -11,14 +11,16 @@
       :searchCol="{ xs: 2, sm: 3, md: 4, lg: 6, xl: 8 }"
     >
       <!-- 表格 header 按钮 -->
-      <template #tableHeader>
+      <template #tableHeader="scope">
         <el-button type="primary" :icon="CirclePlus" v-hasPermi="['sys:customer:add']" @click="openDrawer('新增')">新增客户</el-button>
+        <el-button type="danger" :icon="Delete" :disabled="!scope.isSelected" v-hasPermi="['sys:customer:remove']" @click="batchDelete(scope.selectedListIds)">批量删除</el-button>
         <el-button type="primary" :icon="Download" v-hasPermi="['sys:customer:export']" @click="downloadFile">导出客户</el-button>
       </template>
 
       <template #operation="scope">
         <el-button type="primary" link :icon="EditPen" v-hasPermi="['sys:customer:edit']" @click="openDrawer('编辑', scope.row)">编辑</el-button>
-        <el-button type="danger" link :icon="Delete" v-hasPermi="['sys:customer:remove']" @click="deleteCustomer(scope.row)">删除</el-button>
+        <el-button type="danger" link :icon="Delete" v-hasPermi="['sys:customer:remove']" @click="batchDelete([scope.row.id])">删除</el-button>
+        <el-button type="warning" link :icon="Share" v-hasPermi="['sys:customer:share']" @click="customerToPublic(scope.row.id)">转入公海</el-button>
       </template>
     </ProTable>
     <CustomerDialog ref="dialogRef" />
@@ -157,10 +159,17 @@ const openDrawer = (title: string, row: Partial<any> = {}) => {
   }
   dialogRef.value?.acceptParams(params)
 }
+//删除选中客户
+const batchDelete = async (ids: any[]) => {
+  await useHandleData(CustomerApi.remove, ids, '删除所选客户')
+  proTable.value?.clearSelection()
+  proTable.value?.getTableList()
+}
 
-// 删除客户
-const deleteCustomer = async (params: any) => {
-  await useHandleData(CustomerApi.remove, { id: params.id }, `删除【${params.name}】`)
+//转入公海
+const customerToPublic = async (id: any) => {
+  await useHandleData(CustomerApi.toPublic, { id: id }, '转入公海')
+  proTable.value?.clearSelection()
   proTable.value?.getTableList()
 }
 </script>
