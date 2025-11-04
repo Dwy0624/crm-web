@@ -85,6 +85,9 @@ export const IsKeyDecisionMakerList: { [key in IsKeyDecisionMaker]: EnumInfo } =
   [IsKeyDecisionMaker.NO]: { value: 1, label: '否' }
 }
 
+/**
+ * 商品状态枚举（对应实体的 Byte 类型 status）
+ */
 export enum ProductStatus {
   INITIALIZING,
   ONLINE,
@@ -95,4 +98,21 @@ export const ProductStatusList: { [key in ProductStatus]: EnumInfo } = {
   [ProductStatus.INITIALIZING]: { value: 0, label: '初始化' },
   [ProductStatus.ONLINE]: { value: 1, label: '上架' },
   [ProductStatus.OFFLINE]: { value: 2, label: '下架' }
+}
+
+export enum ContractStatus {
+  INITIALIZING,
+  UNDER_REVIEW,
+  APPROVED,
+  REJECTED
+}
+
+/**
+ * 合同状态枚举（对应实体的 Byte 类型 status）
+ */
+export const ContractStatusList: { [key in ContractStatus]: EnumInfo } = {
+  [ContractStatus.INITIALIZING]: { value: 0, label: '初始化' },
+  [ContractStatus.UNDER_REVIEW]: { value: 1, label: '审核中' },
+  [ContractStatus.APPROVED]: { value: 2, label: '审核通过' },
+  [ContractStatus.REJECTED]: { value: 3, label: '审核未通过' }
 }
