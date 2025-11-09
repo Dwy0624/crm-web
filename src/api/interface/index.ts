@@ -147,3 +147,8 @@ export namespace SysOperLog {
     costTime?: number;
   }
 }
+
+export interface TradeArray{
+  timeList: string[],
+  countList: number[]
+}
