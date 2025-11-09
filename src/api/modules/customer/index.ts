@@ -11,11 +11,9 @@ export const CustomerApi = {
   remove: (params: any) => http.post(COMMON_ADMIN_API + '/customer/remove', params),
   export: (params: any) => http.post(COMMON_ADMIN_API + '/customer/export', params, { responseType: 'blob' }),
   toPublic: (params: any) => http.post(COMMON_ADMIN_API + '/customer/toPublic', params),
-  toPrivate: (params: any) => http.post(COMMON_ADMIN_API + '/customer/toPrivate', params)
+  toPrivate: (params: any) => http.post(COMMON_ADMIN_API + '/customer/toPrivate', params),
+  trendData: (params: any) => http.post(COMMON_ADMIN_API + '/customer/trendData', params)
 }
-
-import http from '@/api'
-import { COMMON_ADMIN_API } from '@/api/axios/servicePort'
 
 /**
  * @name 商品管理
