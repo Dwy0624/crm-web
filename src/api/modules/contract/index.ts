@@ -9,5 +9,7 @@ export const ContractApi = {
   //   list: (params: any) => http.post(COMMON_ADMIN_API + '/contract/list', params)
   remove: (params: any) => http.post(COMMON_ADMIN_API + '/contract/remove', params),
   saveOrEdit: (params: any) => http.post(COMMON_ADMIN_API + '/contract/saveOrUpdate', params),
-  export: (params: any) => http.post(COMMON_ADMIN_API + '/contract/export', params, { responseType: 'blob' })
+  export: (params: any) => http.post(COMMON_ADMIN_API + '/contract/export', params, { responseType: 'blob' }),
+  // 合同统计数据接口
+  getContractStatusPieData: () => http.post(COMMON_ADMIN_API + '/contract/statusPieData')
 }
