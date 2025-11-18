@@ -152,7 +152,7 @@ export interface TradeArray{
   timeList: string[],
   countList: number[]
 }
-// src/api/interface/index.ts (补充以下内容)
+
 export interface DashboardStatistics {
   newCustomerCount: number
   customerChange: number
@@ -162,6 +162,10 @@ export interface DashboardStatistics {
   contractChange: number
   contractAmount: number
   amountChange: number
+  todayApprovedCount: number  
+  // 今日审核通过
+  todayRejectedCount: number  
+  // 今日审核拒绝
 }
 
 export interface DashboardTrend {

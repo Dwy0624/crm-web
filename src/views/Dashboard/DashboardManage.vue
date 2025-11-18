@@ -18,6 +18,10 @@
           color="#f53f3f"
           :isAmount="true"
         />
+        <!-- 今日审核通过卡片 -->
+        <StatisticsCard title="今日审核通过" :value="statisticsData.todayApprovedCount" icon="Check" color="#00b42a" :change="0" />
+        <!-- 今日审核拒绝卡片 -->
+        <StatisticsCard title="今日审核拒绝" :value="statisticsData.todayRejectedCount" icon="Close" color="#f53f3f" :change="0" />
       </div>
     </div>
 
@@ -47,7 +51,9 @@ const statisticsData = ref<DashboardStatistics>({
   newContractCount: 0,
   contractChange: 0,
   contractAmount: 0,
-  amountChange: 0
+  amountChange: 0,
+  todayApprovedCount: 0,
+  todayRejectedCount: 0
 })
 const trendData = ref<DashboardTrend>({
   dates: [],
@@ -61,11 +67,81 @@ const formatCurrency = (value: number) => `¥${value.toFixed(2)}`
 const fetchStatisticsData = async () => {
   try {
     const res = await DashboardApi.getDashboardData()
-    if (res.data?.statistics && res.data?.trend) {
-      statisticsData.value = res.data.statistics
-      trendData.value = res.data.trend
+    // 1. 校验返回数据结构完整性
+    if (!res?.data || !res.data.statistics || !res.data.trend) {
+      console.error('获取的数据格式不完整，缺少 statistics 或 trend 字段')
+      // 赋值默认空数据，避免图表接收 undefined
+      statisticsData.value = {
+        newCustomerCount: 0,
+        customerChange: 0,
+        newLeadCount: 0,
+        leadChange: 0,
+        newContractCount: 0,
+        contractChange: 0,
+        contractAmount: 0,
+        amountChange: 0,
+        todayApprovedCount: 0,
+        todayRejectedCount: 0
+      }
+      trendData.value = { dates: [], customerData: [], leadData: [], contractData: [] }
+      return
+    }
+
+    // 2. 校验 trend 字段下的数组格式（避免长度不一致）
+    const { trend } = res.data
+    const requiredArrays = [trend.dates, trend.customerData, trend.leadData, trend.contractData]
+    if (requiredArrays.some((arr) => !Array.isArray(arr))) {
+      console.error('trend 字段下的 dates/customerData/leadData/contractData 必须是数组')
+      trendData.value = { dates: [], customerData: [], leadData: [], contractData: [] }
     } else {
-      console.error('获取的数据格式不正确')
+      // 确保所有数组长度一致（避免图表数据错位）
+      const maxLength = Math.min(...requiredArrays.map((arr) => arr.length))
+      trendData.value = {
+        dates: trend.dates.slice(0, maxLength),
+        customerData: trend.customerData.slice(0, maxLength),
+        leadData: trend.leadData.slice(0, maxLength),
+        contractData: trend.contractData.slice(0, maxLength)
+      }
+    }
+
+    // 3. 正常赋值统计数据
+    statisticsData.value = {
+      ...res.data.statistics,
+      // 补充默认值，避免后端未返回导致的 undefined
+      todayApprovedCount: res.data.statistics.todayApprovedCount || 0,
+      todayRejectedCount: res.data.statistics.todayRejectedCount || 0
+    }
+  } catch (error) {
+    console.error('获取统计数据失败:', error)
+    // 异常时赋值默认空数据
+    statisticsData.value = {
+      newCustomerCount: 0,
+      customerChange: 0,
+      newLeadCount: 0,
+      leadChange: 0,
+      newContractCount: 0,
+      contractChange: 0,
+      contractAmount: 0,
+      amountChange: 0,
+      todayApprovedCount: 0,
+      todayRejectedCount: 0
+    }
+    trendData.value = { dates: [], customerData: [], leadData: [], contractData: [] }
+  }
+}
+
+const _getStatisticsData = async () => {
+  try {
+    const res = await DashboardApi.getStatistics()
+    statisticsData.value = {
+      newCustomerCount: res.data.newCustomerCount || 0,
+      customerChange: res.data.customerChange || 0,
+      newLeadCount: res.data.newLeadCount || 0,
+      leadChange: res.data.leadChange || 0,
+      newContractCount: res.data.newContractCount || 0,
+      contractChange: res.data.contractChange || 0,
+      todayApprovedCount: res.data.todayApprovedCount || 0,
+      todayRejectedCount: res.data.todayRejectedCount || 0
     }
   } catch (error) {
     console.error('获取统计数据失败:', error)

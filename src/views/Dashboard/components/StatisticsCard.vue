@@ -24,8 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { CaretTop, CaretBottom } from '@element-plus/icons-vue'
-import { User, Search, Document, Money } from '@element-plus/icons-vue'
+import { User, Search, Document, Money, Check, Close } from '@element-plus/icons-vue'
 
 const _props = defineProps({
   title: {
@@ -59,7 +58,9 @@ const _components = {
   User,
   Search,
   Document,
-  Money
+  Money,
+  Check,
+  Close
 }
 </script>
 
